@@ -25,21 +25,6 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get('/favourite/:id')
-  favourite(@Param('id') id: string, @Req() req) {
-    return this.usersService.favourite(id, req?.user?._id);
-  }
-
-  @Post('/add-to-cart')
-  addToCart(@Body() addToCartDto: AddToCartDto, @Req() req) {
-    return this.usersService.addToCart(req?.user?._id, addToCartDto);
-  }
-
-  @Post('/update-cart')
-  updateCart(@Body() updateCartDto: UpdateCartDto, @Req() req) {
-    return this.usersService.updateCart(req?.user?._id, updateCartDto);
-  }
-
   @Get('/:id')
   findById(@Param('id') id: string) {
     return this.usersService.findById(id);
