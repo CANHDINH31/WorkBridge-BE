@@ -21,10 +21,10 @@ export class User {
   phone: string;
 
   @Prop({ enum: ['seller', 'buyer', 'broker', 'other'], default: 'other' })
-  role: string;
+  type: string;
 
   @Prop({ enum: ['user', 'admin'], default: 'user' })
-  type: string;
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
