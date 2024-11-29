@@ -39,10 +39,8 @@ export class AuthService {
           message: 'Register successfully',
         };
       }
-      return {
-        status: HttpStatus.BAD_REQUEST,
-        message: 'Email already registered',
-      };
+
+      throw new BadRequestException({ message: 'Email already registered' });
     } catch (error) {
       throw error;
     }
