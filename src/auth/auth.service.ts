@@ -52,25 +52,20 @@ export class AuthService {
         email: signInDto.email,
       });
       if (!user) {
-        throw new UnauthorizedException({ message: 'Email không tồn tại' });
+        throw new BadRequestException({ message: 'Email not found' });
       }
       const isMatch = await bcrypt.compare(signInDto.password, user.password);
       if (!isMatch) {
-        throw new UnauthorizedException({
-          message: 'Mật khẩu không chính xác',
+        throw new BadRequestException({
+          message: 'Password mismatch',
         });
       }
 
       const { password, ...data } = user.toObject();
-      const accessToken = await this.jwtService.signAsync(data, {
+      const token = await this.jwtService.signAsync(data, {
         secret: this.configService.get('JWT_SECRET'),
-        expiresIn: this.configService.get('EXPIRESIN_TOKEN'),
       });
-      const refreshToken = await this.jwtService.signAsync(data, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
-        expiresIn: this.configService.get('EXPIRESIN_REFRESH'),
-      });
-      return { accessToken, refreshToken, user: data };
+      return { token, user: data };
     } catch (error) {
       throw error;
     }
