@@ -14,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { VerifyTokenDto } from './dto/verify-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -41,6 +42,17 @@ export class AuthService {
       }
 
       throw new BadRequestException({ message: 'Email already registered' });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async verify(verifyTokenDto: VerifyTokenDto) {
+    try {
+      const data = await this.jwtService.verify(verifyTokenDto.token, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+      return { message: 'Token verified', data };
     } catch (error) {
       throw error;
     }
