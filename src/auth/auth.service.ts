@@ -65,7 +65,7 @@ export class AuthService {
       const token = await this.jwtService.signAsync(data, {
         secret: this.configService.get('JWT_SECRET'),
       });
-      return { token, user: data };
+      return { message: 'Login Successfully', data: { ...data, token } };
     } catch (error) {
       throw error;
     }
