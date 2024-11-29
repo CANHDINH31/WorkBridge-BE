@@ -24,33 +24,24 @@ export class AuthService {
     private readonly httpService: HttpService,
     @InjectQueue('forgot-password') private sendMail: Queue,
   ) {}
-  async me(id: string) {
-    try {
-      const user = await this.userService.find({ _id: id });
-      const { password, ...data } = user.toObject();
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  }
 
   async register(registerDto: RegisterDto) {
     try {
       const existUser = await this.userService.find({
         email: registerDto.email,
-        provider: 'WEB',
       });
+
       if (!existUser) {
         const password = await bcrypt.hash(registerDto.password, 10);
         await this.userService.create({ ...registerDto, password });
         return {
           status: HttpStatus.CREATED,
-          message: 'Đăng kí tài khoản thành công',
+          message: 'Register successfully',
         };
       }
       return {
         status: HttpStatus.BAD_REQUEST,
-        message: 'Email đã tồn tại',
+        message: 'Email already registered',
       };
     } catch (error) {
       throw error;
@@ -61,7 +52,6 @@ export class AuthService {
     try {
       const user = await this.userService.find({
         email: signInDto.email,
-        provider: 'WEB',
       });
       if (!user) {
         throw new UnauthorizedException({ message: 'Email không tồn tại' });
@@ -91,7 +81,7 @@ export class AuthService {
   async forgotPassword(email: string) {
     try {
       await this.sendMail.empty();
-      const user = await this.userService.find({ email, provider: 'WEB' });
+      const user = await this.userService.find({ email });
       if (!user)
         throw new BadRequestException({
           message: 'Email không tồn tại',
@@ -185,7 +175,6 @@ export class AuthService {
       if (res.data) {
         const user = await this.userService.find({
           email: res.data.email,
-          provider: method,
         });
         if (user) {
           const payload = {

@@ -1,24 +1,19 @@
-import { AddToCartDto } from './dto/add-to-cart.dto';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/schemas/users.schema';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { ConditionUserDto } from './dto/condition-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ListDeleteUserDto } from './dto/list-delete-user.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModal: Model<User>) {}
   async find(conditionUserDto: ConditionUserDto) {
     try {
-      const user = await this.userModal
-        .findOne({ ...conditionUserDto })
-        .populate('favourite')
-        .populate('cart.paint');
+      const user = await this.userModal.findOne({ ...conditionUserDto });
       return user;
     } catch (error) {
       throw error;
@@ -27,7 +22,7 @@ export class UsersService {
 
   async findById(id: string) {
     try {
-      const user = await this.find({ _id: id });
+      const user = await this.userModal.findById(id);
       return user;
     } catch (error) {
       throw error;
