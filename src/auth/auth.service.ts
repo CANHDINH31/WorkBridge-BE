@@ -139,6 +139,7 @@ export class AuthService {
 
       return {
         status: HttpStatus.OK,
+        message: 'A mail was sent with new password',
       };
     } catch (error) {
       throw error;
