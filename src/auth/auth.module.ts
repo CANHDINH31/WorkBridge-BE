@@ -7,6 +7,7 @@ import { User, UserSchema } from 'src/schemas/users.schema';
 import { JwtService } from '@nestjs/jwt';
 import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bull';
+import { AuthConsumer } from './auth.consumer';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { BullModule } from '@nestjs/bull';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, JwtService],
+  providers: [AuthService, UsersService, JwtService, AuthConsumer],
 })
 export class AuthModule {}

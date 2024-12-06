@@ -11,7 +11,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AuthMiddleware } from './auth/middleware/auth.middleware';
-
+import { MailerModule } from '@nest-modules/mailer';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -20,6 +21,35 @@ import { AuthMiddleware } from './auth/middleware/auth.middleware';
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get('MONGODB_DATABASE_URL'),
       }),
+    }),
+    MailerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          host: configService.get('MAIL_HOST'),
+          secure: false,
+          auth: {
+            user: configService.get('MAIL_USER'),
+            pass: configService.get('MAIL_PASSWORD'),
+          },
+          tls: {
+            rejectUnAuthorized: false,
+          },
+        },
+        defaults: {
+          from: `"WorkBridge" <${configService.get('MAIL_FROM')}>`,
+        },
+      }),
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+        },
+      }),
+      inject: [ConfigService],
     }),
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),

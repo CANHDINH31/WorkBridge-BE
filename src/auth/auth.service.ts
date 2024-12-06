@@ -16,6 +16,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { VerifyTokenDto } from './dto/verify-token.dto';
 import { GoogleDto } from './dto/google.dto';
+import { generatePassword } from 'src/utils/generate-password';
 
 @Injectable()
 export class AuthService {
@@ -122,17 +123,22 @@ export class AuthService {
       const user = await this.userService.find({ email });
       if (!user)
         throw new BadRequestException({
-          message: 'Email không tồn tại',
+          message: 'Email not found',
         });
-      const { password, ...data } = user.toObject();
-      const token = await this.jwtService.signAsync(data, {
-        secret: this.configService.get('JWT_SECRET'),
-        expiresIn: '5m',
+
+      const password = generatePassword();
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      await this.userService.update({
+        _id: user._id?.toString(),
+        password: hashedPassword,
       });
-      await this.sendMail.add({ email: data.email, token });
+
+      await this.sendMail.add({ email: user.email, password });
+
       return {
         status: HttpStatus.OK,
-        data: { email: data.email },
       };
     } catch (error) {
       throw error;

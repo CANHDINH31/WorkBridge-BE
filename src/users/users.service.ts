@@ -40,11 +40,9 @@ export class UsersService {
   async update(updateUserDto: UpdateUserDto) {
     try {
       const { _id, ...data } = updateUserDto;
-      const updateUser = await this.userModal
-        .findByIdAndUpdate(_id, data, {
-          new: true,
-        })
-        .populate('favourite');
+      const updateUser = await this.userModal.findByIdAndUpdate(_id, data, {
+        new: true,
+      });
       return updateUser;
     } catch (error) {
       throw error;
