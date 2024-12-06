@@ -15,6 +15,7 @@ import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { VerifyTokenDto } from './dto/verify-token.dto';
+import { GoogleDto } from './dto/google.dto';
 
 @Injectable()
 export class AuthService {
@@ -42,6 +43,38 @@ export class AuthService {
       }
 
       throw new BadRequestException({ message: 'Email already registered' });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async google(googleDto: GoogleDto) {
+    try {
+      const existUser = await this.userService.find({
+        email: googleDto.email,
+      });
+
+      if (!existUser) {
+        const hashPassword = await bcrypt.hash(
+          this.configService.get('DEFAULT_PASSWORD'),
+          10,
+        );
+        const user = await this.userService.create({
+          ...googleDto,
+          password: hashPassword,
+        });
+        const { password, ...data } = user.toObject();
+        const token = await this.jwtService.signAsync(data, {
+          secret: this.configService.get('JWT_SECRET'),
+        });
+        return { message: 'Login Successfully', data: token };
+      }
+
+      const { password, ...data } = existUser.toObject();
+      const token = await this.jwtService.signAsync(data, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+      return { message: 'Login Successfully', data: token };
     } catch (error) {
       throw error;
     }

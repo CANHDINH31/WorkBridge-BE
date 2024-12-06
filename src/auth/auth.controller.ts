@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { SignInDto } from './dto/sign-in.dto copy';
 import { VerifyTokenDto } from './dto/verify-token.dto';
+import { GoogleDto } from './dto/google.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -11,6 +12,11 @@ export class AuthController {
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
+  }
+
+  @Post('google')
+  google(@Body() googleDto: GoogleDto) {
+    return this.authService.google(googleDto);
   }
 
   @Post('sign-in')
