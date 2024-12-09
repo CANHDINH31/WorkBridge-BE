@@ -13,6 +13,7 @@ import { UsersModule } from './users/users.module';
 import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { MailerModule } from '@nest-modules/mailer';
 import { BullModule } from '@nestjs/bull';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { BullModule } from '@nestjs/bull';
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
     UsersModule,
+    TransactionsModule,
   ],
   controllers: [],
   providers: [JwtService],
@@ -64,16 +66,8 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .forRoutes(
-        { path: 'rate', method: RequestMethod.POST },
-        { path: 'rate/find-one-by-id/(*)', method: RequestMethod.GET },
-        { path: 'comments', method: RequestMethod.POST },
-        { path: 'comments/(*)', method: RequestMethod.PUT },
-        { path: 'comments/(*)', method: RequestMethod.DELETE },
-        { path: 'users/favourite/(*)', method: RequestMethod.GET },
-        { path: 'users/add-to-cart', method: RequestMethod.POST },
-        { path: 'users/update-cart', method: RequestMethod.POST },
-        { path: 'auth/me', method: RequestMethod.GET },
-        { path: 'users/change-password', method: RequestMethod.POST },
+        { path: 'transactions', method: RequestMethod.ALL },
+        { path: 'transactions/(*)', method: RequestMethod.ALL },
       );
   }
 }

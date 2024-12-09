@@ -1,20 +1,7 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Req,
-  Param,
-  Get,
-  UseInterceptors,
-  UploadedFile,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Post, Body, Req, Param, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ListDeleteUserDto } from './dto/list-delete-user.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { AddToCartDto } from './dto/add-to-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
 
 @Controller('users')
 export class UsersController {
